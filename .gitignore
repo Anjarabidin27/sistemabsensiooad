@@ -1,0 +1,38 @@
+# Laravel Web App ignores
+/web/.env
+/web/.env.backup
+/web/.env.production
+/web/vendor/
+/web/node_modules/
+/web/public/storage
+/web/public/build
+/web/public/hot
+/web/storage/*.key
+/web/storage/pail
+/web/*.log
+/web/storage/app/public/profiles/*
+!/web/storage/app/public/profiles/.gitkeep
+/web/storage/app/public/attendances/*
+!/web/storage/app/public/attendances/.gitkeep
+/web/storage/app/private/temp/*
+!/web/storage/app/private/temp/.gitkeep
+
+# Python AI Engine ignores
+/ai-engine/__pycache__/
+/ai-engine/*.pyc
+/ai-engine/venv/
+/ai-engine/.venv/
+/ai-engine/*.log
+/ai-engine/data/*.pkl
+/ai-engine/data/registered_faces/*
+!/ai-engine/data/registered_faces/.gitkeep
+
+# General & IDE ignores
+.env
+.idea/
+.vscode/
+*.log
+Thumbs.db
+.DS_Store
+.phpunit.result.cache
+/.phpunit.cache

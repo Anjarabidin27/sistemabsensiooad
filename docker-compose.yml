@@ -1,0 +1,131 @@
+version: '3.9'
+
+services:
+  # ============================================================
+  # MySQL Database
+  # ============================================================
+  mysql:
+    image: mysql:8.0
+    container_name: sihadir_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-sihadir_root}
+      MYSQL_DATABASE: ${DB_DATABASE:-sihadir_db}
+      MYSQL_USER: ${DB_USERNAME:-sihadir_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-sihadir_pass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - sihadir_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================
+  # phpMyAdmin
+  # ============================================================
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: sihadir_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: ${DB_USERNAME:-sihadir_user}
+      PMA_PASSWORD: ${DB_PASSWORD:-sihadir_pass}
+    ports:
+      - "8080:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - sihadir_net
+
+  # ============================================================
+  # Python AI Engine (Flask)
+  # ============================================================
+  ai-engine:
+    build:
+      context: ./ai-engine
+      dockerfile: Dockerfile
+    container_name: sihadir_ai_engine
+    restart: unless-stopped
+    environment:
+      FLASK_ENV: ${FLASK_ENV:-production}
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-sihadir_db}
+      DB_USERNAME: ${DB_USERNAME:-sihadir_user}
+      DB_PASSWORD: ${DB_PASSWORD:-sihadir_pass}
+      CONFIDENCE_THRESHOLD: ${CONFIDENCE_THRESHOLD:-0.80}
+      UPLOAD_FOLDER: /app/uploads
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./ai-engine/uploads:/app/uploads
+      - ./ai-engine/logs:/app/logs
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - sihadir_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ============================================================
+  # PHP Laravel (Web)
+  # ============================================================
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: sihadir_web
+    restart: unless-stopped
+    environment:
+      APP_NAME: SIHADIR
+      APP_ENV: ${APP_ENV:-local}
+      APP_KEY: ${APP_KEY:-}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      APP_URL: ${APP_URL:-http://localhost:8000}
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-sihadir_db}
+      DB_USERNAME: ${DB_USERNAME:-sihadir_user}
+      DB_PASSWORD: ${DB_PASSWORD:-sihadir_pass}
+      AI_ENGINE_URL: http://ai-engine:5000
+      AI_ENGINE_TIMEOUT: ${AI_ENGINE_TIMEOUT:-30}
+      SESSION_DRIVER: file
+      CACHE_DRIVER: file
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./web:/var/www/html
+      - web_storage:/var/www/html/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ai-engine:
+        condition: service_healthy
+    networks:
+      - sihadir_net
+
+# ============================================================
+# Networks & Volumes
+# ============================================================
+networks:
+  sihadir_net:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  web_storage:
