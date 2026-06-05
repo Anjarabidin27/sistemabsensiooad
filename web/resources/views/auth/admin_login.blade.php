@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Administrator - {{ \App\Models\SystemSetting::get('identity.system_name', 'SIHADIR') }}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -72,6 +76,8 @@
                     </button>
                 </form>
             </div>
+        <div style="text-align: center; padding-top: 1rem; color: #888; font-size: 0.8rem;">
+            Aplikasi ini dibuat hanya untuk keperluan tugas akademik.
         </div>
     </div>
 

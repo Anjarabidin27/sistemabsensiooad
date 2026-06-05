@@ -64,12 +64,23 @@ class StudentController extends Controller
             'enrollment_year' => 'nullable|integer|min:2000|max:' . (date('Y') + 1),
             'password' => 'required|string|min:6',
             'is_active' => 'boolean',
-            'photo' => 'nullable|image|max:2048', // max 2MB
+            'photo' => 'nullable|image|max:20480', // max 20MB
         ]);
 
         if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('students', 'public');
-            $validated['photo_path'] = $path;
+            $file = $request->file('photo');
+            $fileName = 'student_' . time() . '_' . uniqid() . '.jpg';
+            $pathLocal = 'students/' . $fileName;
+
+            $destinationPath = storage_path('app/public/' . $pathLocal);
+            $success = \App\Helpers\ImageHelper::compressAndResize($file->getRealPath(), $destinationPath);
+
+            if (!$success) {
+                $path = $request->file('photo')->storeAs('students', $fileName, 'public');
+                $validated['photo_path'] = $path;
+            } else {
+                $validated['photo_path'] = $pathLocal;
+            }
         }
 
         $validated['password'] = Hash::make($validated['password']);
@@ -98,7 +109,7 @@ class StudentController extends Controller
             'enrollment_year' => 'nullable|integer|min:2000|max:' . (date('Y') + 1),
             'password' => 'nullable|string|min:6',
             'is_active' => 'boolean',
-            'photo' => 'nullable|image|max:2048',
+            'photo' => 'nullable|image|max:20480', // max 20MB
         ]);
 
         if ($request->hasFile('photo')) {
@@ -106,8 +117,20 @@ class StudentController extends Controller
             if ($student->photo_path) {
                 Storage::disk('public')->delete($student->photo_path);
             }
-            $path = $request->file('photo')->store('students', 'public');
-            $validated['photo_path'] = $path;
+            
+            $file = $request->file('photo');
+            $fileName = 'student_' . time() . '_' . uniqid() . '.jpg';
+            $pathLocal = 'students/' . $fileName;
+
+            $destinationPath = storage_path('app/public/' . $pathLocal);
+            $success = \App\Helpers\ImageHelper::compressAndResize($file->getRealPath(), $destinationPath);
+
+            if (!$success) {
+                $path = $request->file('photo')->storeAs('students', $fileName, 'public');
+                $validated['photo_path'] = $path;
+            } else {
+                $validated['photo_path'] = $pathLocal;
+            }
         }
 
         if (!empty($validated['password'])) {

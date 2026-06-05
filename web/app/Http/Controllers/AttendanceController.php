@@ -318,7 +318,7 @@ class AttendanceController extends Controller
     public function uploadProfilePhoto(Request $request)
     {
         $request->validate([
-            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048', // max 2MB
+            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:20480', // max 20MB
         ]);
 
         $student = Auth::guard('student')->user();
@@ -326,15 +326,18 @@ class AttendanceController extends Controller
         if ($request->hasFile('profile_photo')) {
             $file = $request->file('profile_photo');
             
-            $fileExtension = $file->getClientOriginalExtension();
-            $fileName = 'profile_' . $student->student_number . '_' . time() . '.' . $fileExtension;
+            $fileName = 'profile_' . $student->student_number . '_' . time() . '.jpg';
             $pathLocal = 'profiles/' . $fileName;
 
-            // Ensure directory exists
-            Storage::disk('public')->makeDirectory('profiles');
+            // Compress and save to public storage using ImageHelper
+            $destinationPath = storage_path('app/public/' . $pathLocal);
+            $success = \App\Helpers\ImageHelper::compressAndResize($file->getRealPath(), $destinationPath);
 
-            // Save to public storage
-            Storage::disk('public')->put($pathLocal, file_get_contents($file->getRealPath()));
+            if (!$success) {
+                // Fallback to original direct copy if compression fails
+                Storage::disk('public')->makeDirectory('profiles');
+                Storage::disk('public')->put($pathLocal, file_get_contents($file->getRealPath()));
+            }
 
             // Delete old profile photo from disk if it was in profiles/
             if ($student->photo_path && str_starts_with($student->photo_path, 'profiles/')) {
@@ -344,7 +347,22 @@ class AttendanceController extends Controller
             // Update student photo_path
             $student->update(['photo_path' => $pathLocal]);
 
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Foto profil berhasil diperbarui.',
+                    'photo_url' => asset('storage/' . $pathLocal)
+                ]);
+            }
+
             return redirect()->route('student.profile')->with('success', 'Foto profil berhasil diperbarui.');
+        }
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memperbarui foto profil.'
+            ], 400);
         }
 
         return redirect()->route('student.profile')->with('error', 'Gagal memperbarui foto profil.');

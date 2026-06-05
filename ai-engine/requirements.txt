@@ -10,3 +10,6 @@ gunicorn==22.0.0
 python-dotenv==1.0.1
 requests==2.32.3
 tf-keras==2.16.0
+Flask-SQLAlchemy==3.1.1
+cryptography
+

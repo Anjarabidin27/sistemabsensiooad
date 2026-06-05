@@ -46,18 +46,18 @@ class Student extends Authenticatable
     public function getPhotoUrlAttribute(): string
     {
         // 1. Cek jika mahasiswa mengunggah foto profil sendiri (berada di folder profiles/)
-        if ($this->photo_path && str_starts_with($this->photo_path, 'profiles/') && file_exists(public_path('storage/' . $this->photo_path))) {
+        if ($this->photo_path && str_starts_with($this->photo_path, 'profiles/')) {
             return asset('storage/' . $this->photo_path);
         }
         
         // 2. Fallback ke foto registrasi biometrik dari AI Engine jika ada
         $embedding = $this->faceEmbeddings()->first();
-        if ($embedding && $embedding->photo_path && file_exists(public_path('storage/' . $embedding->photo_path))) {
+        if ($embedding && $embedding->photo_path) {
             return asset('storage/' . $embedding->photo_path);
         }
 
         // 3. Fallback ke general photo_path (misalnya jika diisi manual di DB)
-        if ($this->photo_path && file_exists(public_path('storage/' . $this->photo_path))) {
+        if ($this->photo_path) {
             return asset('storage/' . $this->photo_path);
         }
 

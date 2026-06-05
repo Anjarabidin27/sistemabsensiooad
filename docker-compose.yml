@@ -14,7 +14,7 @@ services:
       MYSQL_USER: ${DB_USERNAME:-sihadir_user}
       MYSQL_PASSWORD: ${DB_PASSWORD:-sihadir_pass}
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -22,9 +22,9 @@ services:
       - sihadir_net
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 15s
+      timeout: 10s
+      retries: 15
 
   # ============================================================
   # phpMyAdmin
@@ -116,6 +116,23 @@ services:
         condition: service_healthy
       ai-engine:
         condition: service_healthy
+    networks:
+      - sihadir_net
+
+  # ============================================================
+  # Nginx Proxy Manager (Reverse Proxy)
+  # ============================================================
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: sihadir_npm
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./npm/data:/data
+      - ./npm/letsencrypt:/etc/letsencrypt
     networks:
       - sihadir_net
 

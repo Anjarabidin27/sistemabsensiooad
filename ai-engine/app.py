@@ -28,7 +28,10 @@ def create_app():
     # ── Database ───────────────────────────────────────────────
     db.init_app(app)
     with app.app_context():
-        db.create_all()
+        try:
+            db.create_all()
+        except Exception as e:
+            app.logger.warning(f"Database table creation skipped or concurrent: {e}")
 
     # ── Upload folder ──────────────────────────────────────────
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)

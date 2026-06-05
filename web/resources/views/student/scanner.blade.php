@@ -184,7 +184,7 @@
                     <span style="font-size: 0.775rem; color: var(--text-muted);">Kamera bermasalah? </span>
                     <label style="font-size: 0.775rem; font-weight: 700; color: var(--accent); cursor: pointer; text-decoration: underline;">
                         Upload Foto Manual
-                        <input type="file" id="fallback-upload" accept="image/*" style="display: none;">
+                        <input type="file" id="fallback-upload" accept="image/*" capture="user" style="display: none;">
                     </label>
                 </div>
 

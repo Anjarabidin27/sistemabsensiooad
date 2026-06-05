@@ -6,6 +6,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Dashboard') - SIHADIR</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    
     <!-- CSS Styles -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     
@@ -115,6 +118,9 @@
 
             <!-- Main Content Slot -->
             @yield('content')
+            <footer style="text-align: center; padding: 1rem; color: var(--text-muted); font-size: 0.8rem; margin-top: auto;">
+                Aplikasi ini dibuat hanya untuk keperluan tugas akademik.
+            </footer>
         </main>
     </div>
 
