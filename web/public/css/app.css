@@ -722,7 +722,59 @@ button, input, select, textarea {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: radial-gradient(circle at 10% 20%, rgb(14, 24, 62) 0%, rgb(27, 42, 107) 90.1%);
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(-45deg, #0b132b, #1c2e63, #0d1e50, #101c3d);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.auth-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 50px 50px;
+    transform: rotate(20deg);
+    animation: moveGrid 30s linear infinite;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.auth-wrapper::after {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245, 166, 35, 0.15) 0%, rgba(245, 166, 35, 0) 70%);
+    top: -10%;
+    right: -10%;
+    filter: blur(60px);
+    animation: floatGlow 10s ease-in-out infinite alternate;
+    z-index: 0;
+    pointer-events: none;
+}
+
+@keyframes moveGrid {
+    0% { transform: rotate(20deg) translateY(0); }
+    100% { transform: rotate(20deg) translateY(-50px); }
+}
+
+@keyframes floatGlow {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-50px, 50px) scale(1.2); }
 }
 
 .auth-card {
