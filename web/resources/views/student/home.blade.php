@@ -120,6 +120,26 @@
                 @else
                     <div style="display: flex; flex-direction: column;">
                         @foreach($coursesToday as $course)
+                            @php
+                                $checkedToday = \App\Models\Attendance::where('student_id', $student->id)
+                                    ->where('course_id', $course->id)
+                                    ->whereDate('check_in_at', Carbon\Carbon::today())
+                                    ->first();
+
+                                $now = Carbon\Carbon::now();
+                                $allowedFrom = Carbon\Carbon::createFromFormat('H:i:s', $course->schedule_start)
+                                    ->setDate($now->year, $now->month, $now->day)
+                                    ->subMinutes(30);
+                                $scheduleEnd = Carbon\Carbon::createFromFormat('H:i:s', $course->schedule_end)
+                                    ->setDate($now->year, $now->month, $now->day);
+
+                                $tooEarly  = $now->lt($allowedFrom);
+                                $tooLate   = $now->gt($scheduleEnd);
+                                $canScan   = !$tooEarly && !$tooLate;
+
+                                // Hitung menit tersisa sebelum bisa scan
+                                $minutesLeft = $tooEarly ? $now->diffInMinutes($allowedFrom) : 0;
+                            @endphp
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border-color);">
                                 <div style="display: flex; flex-direction: column; gap: 4px;">
                                     <span style="font-weight: 700; font-size: 0.875rem; color: var(--primary-dark);">{{ $course->name }}</span>
@@ -128,24 +148,35 @@
                                         {{ substr($course->schedule_start, 0, 5) }} - {{ substr($course->schedule_end, 0, 5) }} · SKS {{ $course->credits }} · Ruang {{ $course->room }}
                                     </span>
                                 </div>
-                                @php
-                                    $checkedToday = \App\Models\Attendance::where('student_id', $student->id)
-                                        ->where('course_id', $course->id)
-                                        ->whereDate('check_in_at', Carbon\Carbon::today())
-                                        ->first();
-                                @endphp
+
                                 @if($checkedToday)
+                                    {{-- Sudah absen --}}
                                     <span class="badge badge-present" style="font-size: 0.65rem;">
                                         {{ $checkedToday->status === 'present' ? 'Hadir' : 'Terlambat' }}
                                     </span>
+
+                                @elseif($tooLate)
+                                    {{-- Kelas sudah selesai --}}
+                                    <span style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); background: var(--border-color); padding: 4px 10px; border-radius: 6px; white-space: nowrap;">
+                                        <i class="fa-solid fa-ban"></i> Selesai
+                                    </span>
+
+                                @elseif($tooEarly)
+                                    {{-- Belum waktunya --}}
+                                    <span style="font-size: 0.68rem; font-weight: 700; color: var(--warning); background: var(--warning-light); padding: 4px 10px; border-radius: 6px; white-space: nowrap; text-align: center;">
+                                        <i class="fa-solid fa-hourglass-half"></i> {{ $minutesLeft }}m lagi
+                                    </span>
+
                                 @else
+                                    {{-- Bisa scan sekarang --}}
                                     <a href="{{ route('student.scanner') }}?course_id={{ $course->id }}" class="btn btn-primary btn-sm" style="font-size: 0.7rem; padding: 4px 10px; border-radius: var(--radius-sm);">
-                                        Scan
+                                        <i class="fa-solid fa-camera"></i> Scan
                                     </a>
                                 @endif
                             </div>
                         @endforeach
                     </div>
+
                 @endif
             </div>
         </div>
