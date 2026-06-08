@@ -21,8 +21,8 @@
 </head>
 <body>
 
-    <div class="auth-wrapper" style="background: radial-gradient(circle at 10% 20%, rgb(15, 23, 42) 0%, rgb(8, 12, 28) 90.1%);">
-        <div class="auth-card" style="border-top: 5px solid var(--accent);">
+    <div class="auth-wrapper">
+        <div class="auth-card">
             <div class="auth-header">
                 @php
                     $logoPath = \App\Models\SystemSetting::get('identity.logo_path', 'images/logo_udinus.png');
@@ -77,10 +77,10 @@
                     </button>
                 </form>
             </div>
-        <div style="text-align: center; padding-top: 1rem; color: #888; font-size: 0.8rem;">
-            Aplikasi ini dibuat hanya untuk keperluan tugas akademik.
+            <div class="auth-footer">
+                Aplikasi ini dibuat hanya untuk keperluan tugas akademik.
+            </div>
         </div>
-    </div>
 
 </body>
 </html>

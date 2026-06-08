@@ -77,10 +77,10 @@
                     </button>
                 </form>
             </div>
-        <div style="text-align: center; padding-top: 1rem; color: #888; font-size: 0.8rem;">
-            Aplikasi ini dibuat hanya untuk keperluan tugas akademik.
+            <div class="auth-footer">
+                Aplikasi ini dibuat hanya untuk keperluan tugas akademik.
+            </div>
         </div>
-    </div>
 
 </body>
 </html>
