@@ -4,6 +4,100 @@
 @section('header-title', 'Data Mahasiswa')
 @section('header-subtitle', 'Kelola informasi mahasiswa dan data biometrik wajah')
 
+@push('styles')
+<style>
+/* ── Mobile Card Layout ─────────────────────────────── */
+.student-cards { display: none; flex-direction: column; gap: 14px; }
+
+.student-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
+}
+.student-card:hover { box-shadow: var(--shadow-md); }
+
+.student-card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.student-card-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-light);
+    flex-shrink: 0;
+}
+
+.student-card-info { flex: 1; min-width: 0; }
+
+.student-card-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.student-card-nim {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--primary);
+    background: rgba(27,42,107,0.08);
+    padding: 2px 8px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.student-card-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+.student-card-meta span { display: flex; align-items: center; gap: 5px; }
+.student-card-meta i { color: var(--primary); width: 14px; }
+
+.student-card-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.student-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+}
+.student-card-actions .btn { flex: 1; min-width: 0; font-size: 0.78rem; padding: 7px 10px; justify-content: center; }
+
+@media (max-width: 768px) {
+    .table-responsive { display: none !important; }
+    .student-cards { display: flex; }
+
+    /* Filter area stacked */
+    .card-header form { flex-direction: column; }
+    .card-header form .form-control,
+    .card-header form .btn { max-width: 100% !important; width: 100%; }
+    .card-header { flex-direction: column; }
+    .card-header > a { width: 100%; justify-content: center; }
+}
+</style>
+@endpush
+
 @section('content')
     
     <!-- Alerts -->
@@ -48,18 +142,18 @@
             </a>
         </div>
 
-        <!-- Students Table -->
+        <!-- Desktop: Students Table -->
         <div class="card-body" style="padding: 0;">
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th class="hide-mobile">Foto</th>
+                            <th>Foto</th>
                             <th>NIM</th>
                             <th>Nama Mahasiswa</th>
-                            <th class="hide-mobile">Email</th>
-                            <th class="hide-mobile">Program Studi</th>
-                            <th class="hide-mobile">Biometrik Wajah</th>
+                            <th>Email</th>
+                            <th>Program Studi</th>
+                            <th>Biometrik Wajah</th>
                             <th>Status</th>
                             <th style="text-align: right;">Aksi</th>
                         </tr>
@@ -67,14 +161,14 @@
                     <tbody>
                         @forelse($students as $student)
                             <tr>
-                                <td class="hide-mobile">
+                                <td>
                                     <img src="{{ $student->photo_url }}" alt="Profile" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary-light);">
                                 </td>
                                 <td style="font-weight: 700; color: var(--primary-dark);">{{ $student->student_number }}</td>
                                 <td style="font-weight: 600;">{{ $student->name }}</td>
-                                <td class="hide-mobile">{{ $student->email ?: '-' }}</td>
-                                <td class="hide-mobile">{{ $student->program_study ?: '-' }}</td>
-                                <td class="hide-mobile">
+                                <td>{{ $student->email ?: '-' }}</td>
+                                <td>{{ $student->program_study ?: '-' }}</td>
+                                <td>
                                     @if($student->face_embeddings_count > 0)
                                         <span class="badge badge-present" style="font-size: 0.65rem;">
                                             <i class="fa-solid fa-face-smile" style="margin-right: 4px;"></i>
@@ -122,6 +216,67 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile: Card Layout -->
+            <div class="student-cards" style="padding: 14px;">
+                @forelse($students as $student)
+                    <div class="student-card">
+                        <div class="student-card-top">
+                            <img src="{{ $student->photo_url }}" alt="Profile" class="student-card-avatar">
+                            <div class="student-card-info">
+                                <div class="student-card-name">{{ $student->name }}</div>
+                                <span class="student-card-nim">{{ $student->student_number }}</span>
+                            </div>
+                        </div>
+
+                        <div class="student-card-meta">
+                            <span><i class="fa-solid fa-graduation-cap"></i> {{ $student->program_study ?: 'Prodi -' }}</span>
+                            <span><i class="fa-solid fa-envelope"></i> {{ $student->email ? \Str::limit($student->email, 18) : '-' }}</span>
+                        </div>
+
+                        <div class="student-card-badges">
+                            @if($student->face_embeddings_count > 0)
+                                <span class="badge badge-present" style="font-size: 0.65rem;">
+                                    <i class="fa-solid fa-face-smile" style="margin-right: 4px;"></i>TERDAFTAR
+                                </span>
+                            @else
+                                <span class="badge badge-rejected" style="font-size: 0.65rem;">
+                                    <i class="fa-solid fa-face-meh" style="margin-right: 4px;"></i>KOSONG
+                                </span>
+                            @endif
+
+                            @if($student->is_active)
+                                <span class="badge badge-active">AKTIF</span>
+                            @else
+                                <span class="badge badge-inactive">NON-AKTIF</span>
+                            @endif
+                        </div>
+
+                        <div class="student-card-actions">
+                            <a href="{{ route('admin.students.face', $student->id) }}" class="btn btn-secondary btn-sm" style="color: var(--accent); border-color: rgba(245,166,35,0.3);">
+                                <i class="fa-solid fa-face-viewfinder"></i>
+                                <span>Wajah</span>
+                            </a>
+                            <a href="{{ route('admin.students.edit', $student->id) }}" class="btn btn-secondary btn-sm">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                <span>Edit</span>
+                            </a>
+                            <form action="{{ route('admin.students.destroy', $student->id) }}" method="POST" onsubmit="return confirm('Hapus mahasiswa ini?')" style="flex:1; min-width:0;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-secondary btn-sm" style="color: var(--danger); border-color: rgba(239,68,68,0.2); width:100%; justify-content:center;">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                    <span>Hapus</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        Tidak ada data mahasiswa ditemukan.
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
