@@ -7,7 +7,7 @@
     <title>@yield('title', 'Admin Dashboard') - SIHADIR</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon_v2.png') }}">
     
     <!-- CSS Styles -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">

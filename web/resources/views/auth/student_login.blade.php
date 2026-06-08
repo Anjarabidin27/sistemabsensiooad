@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aplikasi SIHADIR (Presensi Wajah) ini dibuat hanya untuk keperluan tugas akademik dan bukan merupakan portal resmi Universitas Dian Nuswantoro (UDINUS).">
     <title>Login Mahasiswa - {{ \App\Models\SystemSetting::get('identity.system_name', 'SIHADIR') }}</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon_v2.png') }}">
     
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
