@@ -77,8 +77,8 @@ button, input, select, textarea {
 
 .admin-sidebar {
     width: 260px;
-    background-color: var(--bg-sidebar);
-    color: rgba(255, 255, 255, 0.8);
+    background: linear-gradient(180deg, #0f172a 0%, #090d16 100%);
+    color: rgba(255, 255, 255, 0.7);
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -86,11 +86,12 @@ button, input, select, textarea {
     left: 0;
     top: 0;
     z-index: 100;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
     transition: var(--transition);
 }
 
 .sidebar-header {
-    padding: 24px;
+    padding: 28px 24px;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -98,13 +99,17 @@ button, input, select, textarea {
 }
 
 .sidebar-logo {
-    height: 40px;
+    height: 38px;
     width: auto;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar-brand {
     font-weight: 800;
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     color: var(--text-white);
     letter-spacing: 0.5px;
     display: flex;
@@ -112,18 +117,20 @@ button, input, select, textarea {
 }
 
 .sidebar-brand span {
-    font-size: 0.7rem;
-    font-weight: 400;
+    font-size: 0.65rem;
+    font-weight: 600;
     color: var(--accent);
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 1px;
 }
 
 .sidebar-menu {
     list-style: none;
-    padding: 20px 12px;
+    padding: 24px 12px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     flex-grow: 1;
     overflow-y: auto;
 }
@@ -133,26 +140,61 @@ button, input, select, textarea {
     align-items: center;
     gap: 12px;
     padding: 12px 16px;
-    border-radius: var(--radius-md);
-    font-size: 0.925rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
     font-weight: 500;
-    transition: var(--transition);
+    color: rgba(255, 255, 255, 0.65);
+    transition: all 0.2s ease;
+}
+
+.sidebar-item a i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+    transition: all 0.2s ease;
 }
 
 .sidebar-item a:hover {
-    background-color: rgba(255, 255, 255, 0.04);
-    color: var(--text-white);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    padding-left: 20px;
+}
+
+.sidebar-item a:hover i {
+    color: var(--accent);
+    transform: scale(1.1);
 }
 
 .sidebar-item.active a {
-    background-color: var(--accent);
-    color: var(--primary-dark);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%);
+    color: var(--accent) !important;
     font-weight: 600;
+    border-left: 4px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding-left: 12px;
+}
+
+.sidebar-item.active a i {
+    color: var(--accent);
 }
 
 .sidebar-footer {
     padding: 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-footer .btn-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.15);
+    transition: all 0.2s ease;
+}
+
+.sidebar-footer .btn-danger:hover {
+    background-color: var(--danger);
+    color: var(--text-white);
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }
 
 .admin-content {
