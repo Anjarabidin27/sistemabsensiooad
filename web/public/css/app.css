@@ -600,45 +600,105 @@ button, input, select, textarea {
 }
 
 .stat-card {
+    position: relative;
     background-color: var(--card-bg);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
-    padding: 20px;
+    padding: 22px 20px;
     display: flex;
-    align-items: center;
-    gap: 16px;
-    box-shadow: var(--shadow-sm);
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 135px;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.02);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
 
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+    border-color: rgba(27, 42, 107, 0.15);
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.02;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::after {
+    opacity: 0.06;
+}
+
+.stat-card.students::after { background: linear-gradient(135deg, var(--primary), #4f46e5); }
+.stat-card.courses::after { background: linear-gradient(135deg, #0ea5e9, #06b6d4); }
+.stat-card.attendances::after { background: linear-gradient(135deg, var(--success), #34d399); }
+.stat-card.rate::after { background: linear-gradient(135deg, var(--accent), #f59e0b); }
+
 .stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-md);
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
+    transition: transform 0.3s ease;
+    z-index: 2;
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .stat-info {
     display: flex;
     flex-direction: column;
+    gap: 6px;
+    z-index: 2;
 }
 
 .stat-label {
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.06em;
+    line-height: 1.2;
 }
 
 .stat-val {
-    font-size: 1.6rem;
+    font-family: var(--sidebar-font);
+    font-size: 1.85rem;
     font-weight: 800;
-    color: var(--primary-dark);
-    line-height: 1.2;
-    margin-top: 2px;
+    color: var(--text-main);
+    line-height: 1;
+}
+
+.stat-desc {
+    font-size: 0.725rem;
+    color: var(--text-muted);
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    z-index: 2;
+    border-top: 1px dashed var(--border-color);
+    padding-top: 10px;
+}
+
+.stat-desc i {
+    font-size: 0.7rem;
 }
 
 /* Grid Layouts */
@@ -1419,13 +1479,13 @@ body.mobile-menu-open .sidebar-overlay {
     }
 
     .stat-card {
-        background: var(--card-bg);
         border-radius: 16px !important;
-        border: 1px solid var(--border-color);
-        padding: 16px !important;
+        padding: 14px !important;
+        min-height: 115px !important;
+        display: flex !important;
         flex-direction: column !important;
+        justify-content: space-between !important;
         align-items: flex-start !important;
-        gap: 12px !important;
         box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03) !important;
         position: relative;
         overflow: hidden;
@@ -1433,32 +1493,50 @@ body.mobile-menu-open .sidebar-overlay {
     }
 
     /* Colorful Soft Glow Shadows for Cards */
-    .stat-card:nth-child(1) { box-shadow: 0 8px 20px -8px rgba(27, 42, 107, 0.15) !important; }
-    .stat-card:nth-child(2) { box-shadow: 0 8px 20px -8px rgba(14, 165, 233, 0.15) !important; }
-    .stat-card:nth-child(3) { box-shadow: 0 8px 20px -8px rgba(16, 185, 129, 0.15) !important; }
-    .stat-card:nth-child(4) { box-shadow: 0 8px 20px -8px rgba(245, 166, 35, 0.15) !important; }
+    .stat-card:nth-child(1) { box-shadow: 0 8px 20px -8px rgba(27, 42, 107, 0.12) !important; }
+    .stat-card:nth-child(2) { box-shadow: 0 8px 20px -8px rgba(14, 165, 233, 0.12) !important; }
+    .stat-card:nth-child(3) { box-shadow: 0 8px 20px -8px rgba(16, 185, 129, 0.12) !important; }
+    .stat-card:nth-child(4) { box-shadow: 0 8px 20px -8px rgba(245, 166, 35, 0.12) !important; }
 
     .stat-icon {
-        width: 44px !important;
-        height: 44px !important;
-        border-radius: 12px !important;
-        font-size: 1.25rem !important;
+        position: absolute !important;
+        top: 14px !important;
+        right: 14px !important;
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 10px !important;
+        font-size: 1rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     .stat-info {
-        width: 100%;
+        width: 100% !important;
     }
 
     .stat-label {
-        font-size: 0.725rem !important;
+        font-size: 0.65rem !important;
         font-weight: 700 !important;
         letter-spacing: 0.3px;
         margin-bottom: 4px;
+        max-width: calc(100% - 38px);
     }
 
     .stat-val {
-        font-size: 1.5rem !important;
+        font-size: 1.45rem !important;
         font-weight: 800 !important;
+        margin-top: 2px !important;
+    }
+
+    .stat-desc {
+        margin-top: 10px !important;
+        padding-top: 8px !important;
+        font-size: 0.625rem !important;
+        gap: 4px !important;
+        width: 100%;
+        display: flex !important;
+        align-items: center !important;
     }
 
     /* Layout Spacing */

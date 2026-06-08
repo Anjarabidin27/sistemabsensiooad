@@ -19,7 +19,7 @@
 
     <!-- Stats Cards Grid -->
     <div class="stats-grid">
-        <div class="stat-card">
+        <div class="stat-card students">
             <div class="stat-icon" style="background-color: rgba(27, 42, 107, 0.1); color: var(--primary);">
                 <i class="fa-solid fa-user-graduate"></i>
             </div>
@@ -27,9 +27,13 @@
                 <span class="stat-label">Total Mahasiswa</span>
                 <span class="stat-val">{{ $totalStudents }}</span>
             </div>
+            <div class="stat-desc">
+                <i class="fa-solid fa-circle-check" style="color: var(--success);"></i>
+                <span>Siswa aktif terdaftar</span>
+            </div>
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card courses">
             <div class="stat-icon" style="background-color: rgba(14, 165, 233, 0.1); color: #0ea5e9;">
                 <i class="fa-solid fa-book-open"></i>
             </div>
@@ -37,9 +41,13 @@
                 <span class="stat-label">Total Matkul</span>
                 <span class="stat-val">{{ $totalCourses }}</span>
             </div>
+            <div class="stat-desc">
+                <i class="fa-solid fa-calendar-days" style="color: #0ea5e9;"></i>
+                <span>Mata kuliah semester ini</span>
+            </div>
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card attendances">
             <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.1); color: var(--success);">
                 <i class="fa-solid fa-clipboard-user"></i>
             </div>
@@ -47,15 +55,23 @@
                 <span class="stat-label">Presensi Hari Ini</span>
                 <span class="stat-val">{{ $totalCheckinsToday }}</span>
             </div>
+            <div class="stat-desc">
+                <i class="fa-solid fa-bolt" style="color: var(--warning);"></i>
+                <span>Log presensi terverifikasi</span>
+            </div>
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card rate">
             <div class="stat-icon" style="background-color: rgba(245, 166, 35, 0.1); color: var(--accent);">
                 <i class="fa-solid fa-percent"></i>
             </div>
             <div class="stat-info">
                 <span class="stat-label">Rasio Kehadiran</span>
                 <span class="stat-val">{{ number_format($attendanceRate, 1) }}%</span>
+            </div>
+            <div class="stat-desc">
+                <i class="fa-solid fa-chart-line" style="color: var(--accent);"></i>
+                <span>Tingkat kehadiran kelas</span>
             </div>
         </div>
     </div>
