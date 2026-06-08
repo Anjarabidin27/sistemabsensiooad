@@ -752,57 +752,57 @@ button, input, select, textarea {
     padding: 20px;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(180deg, rgba(15, 23, 42, 0.5) 0%, rgba(8, 12, 28, 0.75) 100%), url('../images/login_bg_v2.png') no-repeat center center;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(224, 242, 254, 0.45) 100%), url('../images/login_bg_anime.png') no-repeat center center;
     background-size: cover;
 }
 
 .auth-card {
     width: 100%;
     max-width: 410px;
-    background: rgba(15, 23, 42, 0.75);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08), 0 5px 15px rgba(0, 0, 0, 0.04);
     overflow: hidden;
     transition: all 0.3s ease;
 }
 
 .auth-header {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.45);
     padding: 35px 24px 20px 24px;
     text-align: center;
-    color: var(--text-white);
+    color: var(--primary);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .auth-logo {
     height: 64px;
     width: auto;
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.08));
     transition: all 0.3s ease;
 }
 
 .auth-logo:hover {
-    transform: scale(1.08) rotate(2deg);
+    transform: scale(1.08) rotate(3deg);
 }
 
 .auth-title {
     font-size: 1.45rem;
     font-weight: 800;
-    letter-spacing: 1.5px;
-    color: #ffffff;
+    letter-spacing: 1px;
+    color: var(--primary);
     text-transform: uppercase;
 }
 
 .auth-subtitle {
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--text-muted);
     margin-top: -4px;
 }
 
@@ -811,29 +811,30 @@ button, input, select, textarea {
 }
 
 .auth-card .form-label {
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--text-main);
     font-weight: 600;
 }
 
 .auth-card .form-control {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #ffffff;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    color: var(--text-main);
     transition: all 0.3s ease;
 }
 
 .auth-card .form-control:focus {
-    background: rgba(255, 255, 255, 0.08);
+    background: #ffffff;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.25);
 }
 
 .auth-card .form-control::placeholder {
-    color: rgba(255, 255, 255, 0.45);
+    color: var(--text-muted);
+    opacity: 0.6;
 }
 
 .auth-card label, .auth-card span {
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-muted);
 }
 
 .auth-card a {
@@ -849,9 +850,9 @@ button, input, select, textarea {
 
 .auth-footer {
     padding: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(0, 0, 0, 0.2);
-    color: rgba(255, 255, 255, 0.4);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    background: rgba(0, 0, 0, 0.02);
+    color: var(--text-muted);
     font-size: 0.725rem;
     text-align: center;
     line-height: 1.4;
@@ -987,6 +988,139 @@ button, input, select, textarea {
     .student-history-sidebar {
         position: sticky;
         top: 20px;
+    }
+}
+
+/* ── ADMIN MOBILE RESPONSIVE SIDEBAR & LAYOUT ────────────────────────────── */
+
+.sidebar-toggle-btn {
+    display: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--primary);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.sidebar-toggle-btn:hover {
+    background-color: var(--bg-main);
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 99;
+    display: none;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#sidebar-toggle:checked ~ .sidebar-overlay {
+    display: block;
+}
+
+/* Tablet & Mobile Layout Rules (screen width < 992px) */
+@media (max-width: 992px) {
+    .sidebar-toggle-btn {
+        display: flex;
+    }
+    
+    .admin-sidebar {
+        transform: translateX(-100%);
+        box-shadow: none;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 100;
+    }
+    
+    #sidebar-toggle:checked ~ .admin-container .admin-sidebar {
+        transform: translateX(0);
+        box-shadow: 0 0 30px rgba(15, 23, 42, 0.25);
+    }
+    
+    .admin-content {
+        margin-left: 0 !important;
+        padding: 20px 16px !important;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .grid-2 {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+        gap: 12px !important;
+    }
+    
+    .stat-card {
+        padding: 14px !important;
+        gap: 10px !important;
+    }
+    
+    .stat-icon {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 1.2rem !important;
+    }
+    
+    .stat-val {
+        font-size: 1.35rem !important;
+    }
+    
+    .admin-header {
+        padding-bottom: 16px !important;
+    }
+}
+
+/* Small Mobile Devices (screen width < 576px) */
+@media (max-width: 576px) {
+    .admin-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 16px !important;
+    }
+    
+    .admin-header-title p {
+        display: none !important; /* Hide long subtitle to save space */
+    }
+    
+    .admin-header-actions {
+        width: 100% !important;
+        justify-content: flex-end !important;
+    }
+    
+    .card-header {
+        padding: 14px 16px !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+    
+    .card-body {
+        padding: 16px !important;
+    }
+    
+    /* Make table content very compact and legible */
+    .table th, .table td {
+        padding: 10px 12px !important;
+        font-size: 0.825rem !important;
     }
 }
 

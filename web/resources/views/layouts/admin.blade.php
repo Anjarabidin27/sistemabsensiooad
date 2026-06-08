@@ -31,6 +31,10 @@
 </head>
 <body class="{{ \App\Models\SystemSetting::get('theme.dark_mode', false) ? 'dark-theme' : '' }}">
 
+    <!-- Mobile Sidebar Toggle -->
+    <input type="checkbox" id="sidebar-toggle" style="display: none;">
+    <label for="sidebar-toggle" class="sidebar-overlay"></label>
+
     <div class="admin-container">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
@@ -100,9 +104,14 @@
         <main class="admin-content">
             <!-- Top Header -->
             <header class="admin-header">
-                <div class="admin-header-title">
-                    <h1>@yield('header-title', 'Dashboard')</h1>
-                    <p>@yield('header-subtitle', 'Sistem Informasi Kehadiran Pengenalan Wajah')</p>
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <label for="sidebar-toggle" class="sidebar-toggle-btn">
+                        <i class="fa-solid fa-bars"></i>
+                    </label>
+                    <div class="admin-header-title">
+                        <h1>@yield('header-title', 'Dashboard')</h1>
+                        <p>@yield('header-subtitle', 'Sistem Informasi Kehadiran Pengenalan Wajah')</p>
+                    </div>
                 </div>
                 <div class="admin-header-actions">
                     <div class="admin-user-profile">
