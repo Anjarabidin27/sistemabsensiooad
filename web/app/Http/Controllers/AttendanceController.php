@@ -288,8 +288,9 @@ class AttendanceController extends Controller
         $student = Auth::guard('student')->user();
 
         $courseId = $request->input('course_id');
-        $date = $request->input('date');
-        $status = $request->input('status');
+        // Default tanggal = hari ini jika tidak ada filter date dari URL
+        $date     = $request->input('date', Carbon::today()->toDateString());
+        $status   = $request->input('status');
 
         $query = Attendance::with('course')
             ->where('student_id', $student->id);

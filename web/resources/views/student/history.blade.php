@@ -71,7 +71,8 @@
                             <!-- Filter Tanggal -->
                             <div>
                                 <label class="form-label" style="font-size: 0.75rem; margin-bottom: 4px;">Tanggal</label>
-                                <input type="date" name="date" class="form-control" style="font-size: 0.8rem; padding: 8px 12px; border-radius: var(--radius-sm);" value="{{ request('date') }}">
+                                <input type="date" name="date" class="form-control" style="font-size: 0.8rem; padding: 8px 12px; border-radius: var(--radius-sm);"
+                                    value="{{ request('date', \Carbon\Carbon::today()->toDateString()) }}">
                             </div>
 
                             <!-- Filter Status -->
@@ -171,8 +172,14 @@
                                                     AI Match: {{ $row->confidence_percent }}
                                                 </span>
                                                 @if($row->ip_address)
-                                                    <span style="font-size: 0.65rem; color: var(--text-muted); font-family: monospace;">
-                                                        IP: {{ $row->ip_address }}
+                                                    <span style="font-size: 0.65rem; color: var(--text-muted); display: flex; align-items: center; gap: 3px;">
+                                                        <i class="fa-solid fa-location-crosshairs" style="color: var(--accent); font-size: 0.6rem;"></i>
+                                                        {{ $row->ip_address === '127.0.0.1' || str_starts_with($row->ip_address, '192.168') || str_starts_with($row->ip_address, '10.') ? 'Jaringan Lokal' : 'Terverifikasi' }}
+                                                    </span>
+                                                @else
+                                                    <span style="font-size: 0.65rem; color: var(--text-muted); display: flex; align-items: center; gap: 3px;">
+                                                        <i class="fa-solid fa-location-crosshairs" style="color: var(--accent); font-size: 0.6rem;"></i>
+                                                        Upload Manual
                                                     </span>
                                                 @endif
                                             </div>

@@ -14,14 +14,10 @@
             </div>
         </div>
 
-        <!-- Right Side: University Logo & Action -->
+        <!-- Right Side: University Brand & Logout -->
         <div style="display: flex; align-items: center; gap: 14px;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-                @php
-                    $logoPath = \App\Models\SystemSetting::get('identity.logo_path', 'images/logo_udinus.png');
-                    $logoUrl = str_starts_with($logoPath, 'images/') ? asset($logoPath) : asset('storage/' . $logoPath);
-                @endphp
-                <img src="{{ $logoUrl }}" alt="Logo UDINUS" style="height: 24px; width: auto;">
+            <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border-radius: 8px; padding: 5px 10px;">
+                <i class="fa-solid fa-graduation-cap" style="color: white; font-size: 0.75rem; opacity: 0.9;"></i>
                 <span style="font-weight: 800; font-size: 0.75rem; color: white; letter-spacing: 0.5px;">{{ \App\Models\SystemSetting::get('identity.university_short', 'UDINUS') }}</span>
             </div>
             
@@ -155,17 +151,34 @@
 
         <!-- Latest Log Today -->
         @if($latestCheckinToday)
+            @php
+                $lateLimit = \App\Models\SystemSetting::get('attendance.late_threshold_minutes', 15);
+                $courseToday = $latestCheckinToday->course;
+            @endphp
             <div class="card" style="background-color: var(--success-light); border-color: rgba(16, 185, 129, 0.2);">
                 <div class="card-body" style="padding: 16px; display: flex; align-items: center; gap: 12px;">
-                    <div style="color: var(--success); font-size: 1.5rem;">
+                    <div style="color: var(--success); font-size: 1.5rem; flex-shrink: 0;">
                         <i class="fa-solid fa-circle-check"></i>
                     </div>
-                    <div>
+                    <div style="flex: 1;">
                         <span style="font-size: 0.7rem; font-weight: 700; color: var(--success); text-transform: uppercase;">Presensi Hari Ini Berhasil</span>
-                        <h4 style="font-weight: 700; font-size: 0.85rem; color: #065f46;">{{ $latestCheckinToday->course->name }}</h4>
-                        <p style="font-size: 0.75rem; color: #065f46; opacity: 0.8; margin-top: 1px;">
-                            Check-in pukul {{ $latestCheckinToday->check_in_at->format('H:i') }} WIB (Confidence: {{ $latestCheckinToday->confidence_percent }})
-                        </p>
+                        <h4 style="font-weight: 700; font-size: 0.85rem; color: #065f46;">{{ $latestCheckinToday->course ? $latestCheckinToday->course->name : 'Mata Kuliah' }}</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 5px;">
+                            <span style="font-size: 0.72rem; color: #065f46; display: flex; align-items: center; gap: 4px;">
+                                <i class="fa-solid fa-right-to-bracket" style="color: var(--success);"></i>
+                                Masuk: <strong>{{ $latestCheckinToday->check_in_at->format('H:i') }} WIB</strong>
+                            </span>
+                            @if($courseToday && $courseToday->schedule_end)
+                                <span style="font-size: 0.72rem; color: #065f46; display: flex; align-items: center; gap: 4px;">
+                                    <i class="fa-solid fa-right-from-bracket" style="color: #059669;"></i>
+                                    Selesai: <strong>{{ substr($courseToday->schedule_end, 0, 5) }} WIB</strong>
+                                </span>
+                            @endif
+                            <span style="font-size: 0.72rem; color: #065f46; display: flex; align-items: center; gap: 4px;">
+                                <i class="fa-solid fa-clock" style="color: #059669;"></i>
+                                Toleransi: <strong>{{ $lateLimit }} menit</strong>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
