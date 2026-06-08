@@ -54,12 +54,12 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Foto</th>
+                            <th class="hide-mobile">Foto</th>
                             <th>NIM</th>
                             <th>Nama Mahasiswa</th>
-                            <th>Email</th>
-                            <th>Program Studi</th>
-                            <th>Biometrik Wajah</th>
+                            <th class="hide-mobile">Email</th>
+                            <th class="hide-mobile">Program Studi</th>
+                            <th class="hide-mobile">Biometrik Wajah</th>
                             <th>Status</th>
                             <th style="text-align: right;">Aksi</th>
                         </tr>
@@ -67,14 +67,14 @@
                     <tbody>
                         @forelse($students as $student)
                             <tr>
-                                <td>
+                                <td class="hide-mobile">
                                     <img src="{{ $student->photo_url }}" alt="Profile" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary-light);">
                                 </td>
                                 <td style="font-weight: 700; color: var(--primary-dark);">{{ $student->student_number }}</td>
                                 <td style="font-weight: 600;">{{ $student->name }}</td>
-                                <td>{{ $student->email ?: '-' }}</td>
-                                <td>{{ $student->program_study ?: '-' }}</td>
-                                <td>
+                                <td class="hide-mobile">{{ $student->email ?: '-' }}</td>
+                                <td class="hide-mobile">{{ $student->program_study ?: '-' }}</td>
+                                <td class="hide-mobile">
                                     @if($student->face_embeddings_count > 0)
                                         <span class="badge badge-present" style="font-size: 0.65rem;">
                                             <i class="fa-solid fa-face-smile" style="margin-right: 4px;"></i>

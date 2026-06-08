@@ -31,23 +31,27 @@
 </head>
 <body class="{{ \App\Models\SystemSetting::get('theme.dark_mode', false) ? 'dark-theme' : '' }}">
 
-    <!-- Mobile Sidebar Toggle -->
-    <input type="checkbox" id="sidebar-toggle" style="display: none;">
-    <label for="sidebar-toggle" class="sidebar-overlay"></label>
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="document.body.classList.remove('mobile-menu-open')"></div>
 
     <div class="admin-container">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
-            <div class="sidebar-header">
-                @php
-                    $logoPath = \App\Models\SystemSetting::get('identity.logo_path', 'images/logo_udinus.png');
-                    $logoUrl = str_starts_with($logoPath, 'images/') ? asset($logoPath) : asset('storage/' . $logoPath);
-                @endphp
-                <img src="{{ $logoUrl }}" alt="Logo" class="sidebar-logo">
-                <div class="sidebar-brand">
-                    {{ \App\Models\SystemSetting::get('identity.system_name', 'SIHADIR') }}
-                    <span>{{ \App\Models\SystemSetting::get('identity.university_short', 'UDINUS') }}</span>
+            <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    @php
+                        $logoPath = \App\Models\SystemSetting::get('identity.logo_path', 'images/logo_udinus.png');
+                        $logoUrl = str_starts_with($logoPath, 'images/') ? asset($logoPath) : asset('storage/' . $logoPath);
+                    @endphp
+                    <img src="{{ $logoUrl }}" alt="Logo" class="sidebar-logo">
+                    <div class="sidebar-brand">
+                        {{ \App\Models\SystemSetting::get('identity.system_name', 'SIHADIR') }}
+                        <span>{{ \App\Models\SystemSetting::get('identity.university_short', 'UDINUS') }}</span>
+                    </div>
                 </div>
+                <button type="button" class="sidebar-close-btn" onclick="document.body.classList.remove('mobile-menu-open')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
             
             <ul class="sidebar-menu">
@@ -105,22 +109,40 @@
             <!-- Top Header -->
             <header class="admin-header">
                 <div style="display: flex; align-items: center; gap: 14px;">
-                    <label for="sidebar-toggle" class="sidebar-toggle-btn">
+                    <button type="button" class="sidebar-toggle-btn" onclick="document.body.classList.add('mobile-menu-open')">
                         <i class="fa-solid fa-bars"></i>
-                    </label>
+                    </button>
                     <div class="admin-header-title">
                         <h1>@yield('header-title', 'Dashboard')</h1>
                         <p>@yield('header-subtitle', 'Sistem Informasi Kehadiran Pengenalan Wajah')</p>
                     </div>
                 </div>
                 <div class="admin-header-actions">
-                    <div class="admin-user-profile">
+                    <div class="admin-user-profile" id="userProfileBtn">
                         <div class="admin-avatar">
                             AD
                         </div>
                         <div class="admin-header-userinfo">
                             <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-main);">{{ Auth::user()->name }}</span>
                             <span style="font-size: 0.725rem; color: var(--text-muted);">Administrator</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem; color: var(--text-muted); margin-left: 4px;"></i>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="admin-profile-dropdown" id="profileDropdown">
+                            <div class="dropdown-header">
+                                <strong>{{ Auth::user()->name }}</strong>
+                                <span>{{ Auth::user()->email }}</span>
+                                <span class="badge">Admin</span>
+                            </div>
+                            <hr>
+                            <form action="{{ route('admin.logout') }}" method="POST" style="width: 100%; margin: 0;">
+                                @csrf
+                                <button type="submit" class="dropdown-item logout-btn">
+                                    <i class="fa-solid fa-right-from-bracket"></i>
+                                    <span>Logout Admin</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -134,7 +156,46 @@
         </main>
     </div>
 
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="admin-mobile-nav">
+        <a href="{{ route('admin.dashboard') }}" class="mobile-nav-item {{ Route::is('admin.dashboard') ? 'active' : '' }}">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="{{ route('admin.students.index') }}" class="mobile-nav-item {{ Route::is('admin.students.*') ? 'active' : '' }}">
+            <i class="fa-solid fa-user-graduate"></i>
+            <span>Mahasiswa</span>
+        </a>
+        <a href="{{ route('admin.courses.index') }}" class="mobile-nav-item {{ Route::is('admin.courses.*') ? 'active' : '' }}">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Mata Kuliah</span>
+        </a>
+        <a href="#" class="mobile-nav-item" onclick="event.preventDefault(); document.body.classList.add('mobile-menu-open');">
+            <i class="fa-solid fa-bars"></i>
+            <span>Menu</span>
+        </a>
+    </nav>
+
     @yield('scripts')
     @stack('scripts')
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const userProfileBtn = document.getElementById('userProfileBtn');
+            
+            if (userProfileBtn) {
+                userProfileBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    this.classList.toggle('active');
+                });
+                
+                document.addEventListener('click', function (e) {
+                    if (!userProfileBtn.contains(e.target)) {
+                        userProfileBtn.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

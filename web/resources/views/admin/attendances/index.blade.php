@@ -57,13 +57,13 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Snapshot</th>
+                            <th class="hide-mobile">Snapshot</th>
                             <th>NIM</th>
                             <th>Nama Mahasiswa</th>
-                            <th>Mata Kuliah</th>
+                            <th class="hide-mobile">Mata Kuliah</th>
                             <th>Tanggal & Waktu</th>
-                            <th>Akurasi AI</th>
-                            <th>IP Address</th>
+                            <th class="hide-mobile">Akurasi AI</th>
+                            <th class="hide-mobile">IP Address</th>
                             <th>Status</th>
                             <th style="text-align: right;">Aksi</th>
                         </tr>
@@ -71,10 +71,10 @@
                     <tbody>
                         @forelse($attendances as $row)
                             <tr>
-                                <td>
+                                <td class="hide-mobile">
                                     @if($row->image_path)
                                         <a href="{{ asset('storage/' . $row->image_path) }}" target="_blank">
-                                            <img src="{{ asset('storage/' . $row->image_path) }}" alt="Snapshot" style="width: 44px; height: 44px; border-radius: var(--radius-sm); object-fit: cover; border: 1.5px solid var(--border-color);">
+                                            <img src="{{ asset('storage/' . $row->image_path) }}" alt="Snapshot" style="width: 44px; height: 44px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-color);">
                                         </a>
                                     @else
                                         <div style="width: 44px; height: 44px; border-radius: var(--radius-sm); background-color: var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.8rem;">
@@ -84,7 +84,7 @@
                                 </td>
                                 <td style="font-weight: 700; color: var(--primary-dark);">{{ $row->student->student_number }}</td>
                                 <td style="font-weight: 600;">{{ $row->student->name }}</td>
-                                <td>
+                                <td class="hide-mobile">
                                     @if($row->course)
                                         <strong>{{ $row->course->name }}</strong><br>
                                         <span style="font-size: 0.725rem; color: var(--text-muted);">{{ $row->course->code }}</span>
@@ -99,8 +99,8 @@
                                         {{ $row->check_in_at->format('H:i:s') }} WIB
                                     </span>
                                 </td>
-                                <td style="font-weight: 700; color: var(--primary);">{{ $row->confidence_percent }}</td>
-                                <td style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">{{ $row->ip_address ?: '-' }}</td>
+                                <td class="hide-mobile" style="font-weight: 700; color: var(--primary);">{{ $row->confidence_percent }}</td>
+                                <td class="hide-mobile" style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">{{ $row->ip_address ?: '-' }}</td>
                                 <td>{!! $row->status_badge !!}</td>
                                 <td style="text-align: right;">
                                     <form action="{{ route('admin.attendances.destroy', $row->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus log kehadiran ini?')">

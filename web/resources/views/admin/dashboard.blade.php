@@ -126,19 +126,19 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Snapshot</th>
+                            <th class="hide-mobile">Snapshot</th>
                             <th>NIM</th>
                             <th>Nama Mahasiswa</th>
-                            <th>Mata Kuliah</th>
+                            <th class="hide-mobile">Mata Kuliah</th>
                             <th>Waktu Presensi</th>
-                            <th>Confidence</th>
+                            <th class="hide-mobile">Confidence</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($recentAttendances as $row)
                             <tr>
-                                <td>
+                                <td class="hide-mobile">
                                     @if($row->image_path)
                                         <img src="{{ asset('storage/' . $row->image_path) }}" alt="Face Snapshot" style="width: 40px; height: 40px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-color);">
                                     @else
@@ -149,9 +149,9 @@
                                 </td>
                                 <td style="font-weight: 700; color: var(--primary-dark);">{{ $row->student->student_number }}</td>
                                 <td style="font-weight: 600;">{{ $row->student->name }}</td>
-                                <td>{{ $row->course ? $row->course->name : '-' }}</td>
+                                <td class="hide-mobile">{{ $row->course ? $row->course->name : '-' }}</td>
                                 <td>{{ $row->check_in_at->isoFormat('D MMM Y, HH:mm') }} WIB</td>
-                                <td style="font-weight: 600;">{{ $row->confidence_percent }}</td>
+                                <td class="hide-mobile" style="font-weight: 600;">{{ $row->confidence_percent }}</td>
                                 <td>{!! $row->status_badge !!}</td>
                             </tr>
                         @empty
