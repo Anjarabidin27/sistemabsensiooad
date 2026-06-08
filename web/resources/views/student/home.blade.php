@@ -16,10 +16,11 @@
 
         <!-- Right Side: University Brand & Logout -->
         <div style="display: flex; align-items: center; gap: 14px;">
-            <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border-radius: 8px; padding: 5px 10px;">
-                <i class="fa-solid fa-graduation-cap" style="color: white; font-size: 0.75rem; opacity: 0.9;"></i>
-                <span style="font-weight: 800; font-size: 0.75rem; color: white; letter-spacing: 0.5px;">{{ \App\Models\SystemSetting::get('identity.university_short', 'UDINUS') }}</span>
-            </div>
+            @php
+                $logoPath = \App\Models\SystemSetting::get('identity.logo_path', 'images/logo_udinus.png');
+                $logoUrl = str_starts_with($logoPath, 'images/') ? asset($logoPath) : asset('storage/' . $logoPath);
+            @endphp
+            <img src="{{ $logoUrl }}" alt="Logo" style="height: 28px; width: auto; max-width: 120px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
             
             <form action="{{ route('student.logout') }}" method="POST" style="display: inline;">
                 @csrf
