@@ -83,6 +83,23 @@
                 Aplikasi ini dibuat hanya untuk keperluan tugas akademik.
             </div>
         </div>
+    </div>
 
+    <!-- Script to fade-in background once fully loaded to prevent top-to-bottom loading artifact -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var wrapper = document.querySelector('.auth-wrapper');
+            var bgUrl = "{{ asset('images/login_bg_anime.webp') }}";
+            var img = new Image();
+            img.src = bgUrl;
+            img.onload = function() {
+                wrapper.classList.add('bg-loaded');
+            };
+            // Fallback in case loading takes too long or fails
+            setTimeout(function() {
+                wrapper.classList.add('bg-loaded');
+            }, 1000);
+        });
+    </script>
 </body>
 </html>
