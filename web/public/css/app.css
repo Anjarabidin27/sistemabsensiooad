@@ -752,7 +752,7 @@ button, input, select, textarea {
     padding: 20px;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(224, 242, 254, 0.45) 100%), url('../images/login_bg_anime.png') no-repeat center center;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(224, 242, 254, 0.45) 100%), url('../images/login_bg_anime.webp') no-repeat center center;
     background-size: cover;
 }
 
