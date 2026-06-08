@@ -123,4 +123,13 @@ class CourseController extends Controller
         $course->delete();
         return redirect()->route('admin.courses.index')->with('success', 'Mata kuliah berhasil dihapus.');
     }
+
+    /** Toggle location_required on/off directly from the table. */
+    public function toggleLocation(Course $course)
+    {
+        $course->update(['location_required' => !$course->location_required]);
+
+        $status = $course->location_required ? 'diaktifkan' : 'dinonaktifkan';
+        return redirect()->back()->with('success', "Deteksi lokasi berhasil {$status} untuk mata kuliah {$course->name}.");
+    }
 }

@@ -118,7 +118,7 @@
                         <div class="admin-avatar">
                             AD
                         </div>
-                        <div style="display: flex; flex-direction: column;">
+                        <div class="admin-header-userinfo">
                             <span style="font-weight: 700; font-size: 0.85rem; color: var(--text-main);">{{ Auth::user()->name }}</span>
                             <span style="font-size: 0.725rem; color: var(--text-muted);">Administrator</span>
                         </div>

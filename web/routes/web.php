@@ -63,6 +63,7 @@ Route::prefix('admin')->middleware('auth:web')->group(function () {
     
     // Courses CRUD
     Route::resource('courses', CourseController::class)->names('admin.courses');
+    Route::post('courses/{course}/toggle-location', [CourseController::class, 'toggleLocation'])->name('admin.courses.toggle-location');
     
     // Attendances
     Route::get('attendances', [AttendanceController::class, 'index'])->name('admin.attendances.index');

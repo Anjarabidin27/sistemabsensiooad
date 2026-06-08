@@ -95,6 +95,42 @@ class AttendanceController extends Controller
         $student = Auth::guard('student')->user();
         $course  = Course::findOrFail($request->input('course_id'));
 
+        // ─── VERIFIKASI JAM JADWAL ────────────────────────────────────────────
+        // Mahasiswa hanya boleh absen saat jam kuliah berlangsung
+        $now = Carbon::now();
+        $todayDay = $now->dayOfWeekIso - 1; // 0=Senin, 6=Minggu
+
+        if ($course->schedule_day != $todayDay) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Presensi ditolak. Mata kuliah ini tidak terjadwal hari ini.'
+            ], 422);
+        }
+
+        if ($course->schedule_start && $course->schedule_end) {
+            $scheduleStart = Carbon::createFromFormat('H:i:s', $course->schedule_start)
+                ->setDate($now->year, $now->month, $now->day);
+            $scheduleEnd = Carbon::createFromFormat('H:i:s', $course->schedule_end)
+                ->setDate($now->year, $now->month, $now->day);
+            // Toleransi 30 menit sebelum mulai diperbolehkan check-in
+            $allowedFrom = $scheduleStart->copy()->subMinutes(30);
+
+            if ($now->lt($allowedFrom)) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Presensi belum bisa dilakukan. Kelas ' . $course->name . ' baru dimulai pukul ' . substr($course->schedule_start, 0, 5) . ' WIB.'
+                ], 422);
+            }
+
+            if ($now->gt($scheduleEnd)) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Presensi ditolak. Waktu kelas ' . $course->name . ' sudah berakhir pada pukul ' . substr($course->schedule_end, 0, 5) . ' WIB.'
+                ], 422);
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────
+
         // ─── VERIFIKASI LOKASI (HAVERSINE) ────────────────────────────────────
         // Lapisan keamanan server-side — tidak bisa di-bypass dari DevTools
         if ($course->location_required && $course->hasLocation()) {

@@ -11,6 +11,8 @@
     
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Preload background agar gambar langsung siap sebelum CSS render -->
+    <link rel="preload" href="{{ asset('images/login_bg_anime.webp') }}" as="image" type="image/webp">
     
     <style>
         :root {
