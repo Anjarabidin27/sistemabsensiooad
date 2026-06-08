@@ -137,11 +137,22 @@
                             @php
                                 $isToday = ($course->schedule_day == (Carbon\Carbon::now()->dayOfWeekIso - 1));
                             @endphp
-                            <option value="{{ $course->id }}" {{ request('course_id') == $course->id ? 'selected' : '' }}>
+                            <option value="{{ $course->id }}"
+                                data-location-required="{{ $course->location_required ? 'true' : 'false' }}"
+                                data-latitude="{{ $course->latitude ?? '' }}"
+                                data-longitude="{{ $course->longitude ?? '' }}"
+                                data-radius="{{ $course->location_radius ?? 100 }}"
+                                {{ request('course_id') == $course->id ? 'selected' : '' }}>
                                 {{ $course->name }} [{{ $course->code }}] {{ $isToday ? '• Hari Ini' : '' }}
                             </option>
                         @endforeach
                     </select>
+                </div>
+
+                <!-- GPS Location Status Badge -->
+                <div id="gps-status-box" style="display:none; width: 100%; padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; align-items: center; gap: 8px;">
+                    <i id="gps-icon" class="fa-solid fa-location-dot"></i>
+                    <span id="gps-text">Memeriksa lokasi...</span>
                 </div>
 
                 <!-- Webcam viewfinder -->

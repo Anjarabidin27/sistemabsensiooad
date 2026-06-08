@@ -27,6 +27,7 @@
         }
     </style>
     @yield('styles')
+    @stack('styles')
 </head>
 <body class="{{ \App\Models\SystemSetting::get('theme.dark_mode', false) ? 'dark-theme' : '' }}">
 
@@ -125,5 +126,6 @@
     </div>
 
     @yield('scripts')
+    @stack('scripts')
 </body>
 </html>

@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Student;
 use App\Models\RecognitionLog;
 use App\Services\AiEngineService;
+use App\Services\HaversineService;
 use App\Services\SettingsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -85,12 +86,45 @@ class AttendanceController extends Controller
     public function processScan(Request $request)
     {
         $request->validate([
-            'course_id' => 'required|exists:courses,id',
+            'course_id'    => 'required|exists:courses,id',
             'image_base64' => 'required|string',
+            'student_lat'  => 'nullable|numeric|between:-90,90',
+            'student_lng'  => 'nullable|numeric|between:-180,180',
         ]);
 
         $student = Auth::guard('student')->user();
-        $course = Course::findOrFail($request->input('course_id'));
+        $course  = Course::findOrFail($request->input('course_id'));
+
+        // ─── VERIFIKASI LOKASI (HAVERSINE) ────────────────────────────────────
+        // Lapisan keamanan server-side — tidak bisa di-bypass dari DevTools
+        if ($course->location_required && $course->hasLocation()) {
+            $studentLat = $request->input('student_lat');
+            $studentLng = $request->input('student_lng');
+
+            // Koordinat mahasiswa wajib ada jika mata kuliah mewajibkan GPS
+            if (is_null($studentLat) || is_null($studentLng)) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Data koordinat GPS tidak ditemukan. Pastikan izin lokasi aktif di browser Anda.'
+                ], 422);
+            }
+
+            $result = HaversineService::isWithinRadius(
+                (float) $studentLat,
+                (float) $studentLng,
+                $course->latitude,
+                $course->longitude,
+                $course->location_radius
+            );
+
+            if (!$result['is_within']) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => "Presensi ditolak. Anda berada {$result['distance']}m dari ruang kelas {$course->room}. Batas radius yang diizinkan: {$result['radius']}m."
+                ]);
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────
 
         // 1. Process base64 image data
         $imageData = $request->input('image_base64');

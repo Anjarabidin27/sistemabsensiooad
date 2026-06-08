@@ -57,19 +57,25 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'code' => 'required|string|unique:courses,code|max:20',
-            'name' => 'required|string|max:100',
-            'credits' => 'required|integer|min:1|max:6',
-            'lecturer_name' => 'nullable|string|max:100',
-            'schedule_day' => 'required|integer|min:0|max:6',
-            'schedule_start' => 'required|date_format:H:i',
-            'schedule_end' => 'required|date_format:H:i|after:schedule_start',
-            'room' => 'nullable|string|max:50',
-            'semester' => 'required|string|max:20',
-            'is_active' => 'boolean',
+            'code'              => 'required|string|unique:courses,code|max:20',
+            'name'              => 'required|string|max:100',
+            'credits'           => 'required|integer|min:1|max:6',
+            'lecturer_name'     => 'nullable|string|max:100',
+            'schedule_day'      => 'required|integer|min:0|max:6',
+            'schedule_start'    => 'required|date_format:H:i',
+            'schedule_end'      => 'required|date_format:H:i|after:schedule_start',
+            'room'              => 'nullable|string|max:50',
+            'semester'          => 'required|string|max:20',
+            'is_active'         => 'boolean',
+            'latitude'          => 'nullable|numeric|between:-90,90',
+            'longitude'         => 'nullable|numeric|between:-180,180',
+            'location_radius'   => 'nullable|integer|min:10|max:2000',
+            'location_required' => 'boolean',
         ]);
 
-        $validated['is_active'] = $request->has('is_active') ? $request->boolean('is_active') : true;
+        $validated['is_active']         = $request->has('is_active') ? $request->boolean('is_active') : true;
+        $validated['location_required'] = $request->has('location_required') ? $request->boolean('location_required') : false;
+        $validated['location_radius']   = $validated['location_radius'] ?? 100;
 
         Course::create($validated);
 
@@ -86,19 +92,25 @@ class CourseController extends Controller
     public function update(Request $request, Course $course)
     {
         $validated = $request->validate([
-            'code' => 'required|string|max:20|unique:courses,code,' . $course->id,
-            'name' => 'required|string|max:100',
-            'credits' => 'required|integer|min:1|max:6',
-            'lecturer_name' => 'nullable|string|max:100',
-            'schedule_day' => 'required|integer|min:0|max:6',
-            'schedule_start' => 'required|date_format:H:i',
-            'schedule_end' => 'required|date_format:H:i|after:schedule_start',
-            'room' => 'nullable|string|max:50',
-            'semester' => 'required|string|max:20',
-            'is_active' => 'boolean',
+            'code'              => 'required|string|max:20|unique:courses,code,' . $course->id,
+            'name'              => 'required|string|max:100',
+            'credits'           => 'required|integer|min:1|max:6',
+            'lecturer_name'     => 'nullable|string|max:100',
+            'schedule_day'      => 'required|integer|min:0|max:6',
+            'schedule_start'    => 'required|date_format:H:i',
+            'schedule_end'      => 'required|date_format:H:i|after:schedule_start',
+            'room'              => 'nullable|string|max:50',
+            'semester'          => 'required|string|max:20',
+            'is_active'         => 'boolean',
+            'latitude'          => 'nullable|numeric|between:-90,90',
+            'longitude'         => 'nullable|numeric|between:-180,180',
+            'location_radius'   => 'nullable|integer|min:10|max:2000',
+            'location_required' => 'boolean',
         ]);
 
-        $validated['is_active'] = $request->has('is_active') ? $request->boolean('is_active') : false;
+        $validated['is_active']         = $request->has('is_active') ? $request->boolean('is_active') : false;
+        $validated['location_required'] = $request->has('location_required') ? $request->boolean('location_required') : false;
+        $validated['location_radius']   = $validated['location_radius'] ?? 100;
 
         $course->update($validated);
 

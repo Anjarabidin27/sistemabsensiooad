@@ -4,6 +4,17 @@
 @section('header-title', 'Tambah Mata Kuliah')
 @section('header-subtitle', 'Buat jadwal mata kuliah baru beserta slot ruangan perkuliahan')
 
+@push('styles')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    #location-map { height: 300px; border-radius: 8px; border: 1px solid var(--border-color); }
+    .location-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+        border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .location-badge.active { background: #dcfce7; color: #166534; }
+    .location-badge.inactive { background: #fef9c3; color: #854d0e; }
+</style>
+@endpush
+
 @section('content')
 
     <div class="card" style="max-width: 700px;">
@@ -101,6 +112,47 @@
                     </label>
                 </div>
 
+                {{-- ═══════════════════════════════════════════════ --}}
+                {{-- SECTION: Konfigurasi Lokasi GPS (Haversine)    --}}
+                {{-- ═══════════════════════════════════════════════ --}}
+                <div style="border-top: 1px solid var(--border-color); margin-top: 24px; padding-top: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                        <div>
+                            <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0;"><i class="fa-solid fa-location-dot" style="color: var(--accent); margin-right: 6px;"></i>Konfigurasi Lokasi Kelas (GPS)</h3>
+                            <p style="font-size: 0.78rem; color: var(--text-muted); margin: 4px 0 0;">Jika diaktifkan, mahasiswa wajib berada dalam radius tertentu dari ruang kelas untuk bisa absen.</p>
+                        </div>
+                        <label id="loc-toggle-label" style="display: inline-flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; padding: 8px 14px; border-radius: 8px; border: 1.5px solid var(--border-color); transition: all 0.2s;">
+                            <input type="checkbox" id="location_required" name="location_required" value="1" style="width: 18px; height: 18px; accent-color: var(--accent);">
+                            <span id="loc-toggle-text">Nonaktif</span>
+                        </label>
+                    </div>
+
+                    <div id="location-config" style="display: none;">
+                        <div class="grid-2" style="grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 14px;">
+                            <div class="form-group">
+                                <label for="latitude" class="form-label">Latitude <span style="color: var(--danger);">*</span></label>
+                                <input type="number" id="latitude" name="latitude" class="form-control" step="any" placeholder="-6.9824" value="{{ old('latitude') }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="longitude" class="form-label">Longitude <span style="color: var(--danger);">*</span></label>
+                                <input type="number" id="longitude" name="longitude" class="form-control" step="any" placeholder="110.4121" value="{{ old('longitude') }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="max-width: 300px; margin-bottom: 14px;">
+                            <label for="location_radius" class="form-label">Radius Toleransi (meter)</label>
+                            <input type="number" id="location_radius" name="location_radius" class="form-control" min="10" max="2000" placeholder="100" value="{{ old('location_radius', 100) }}">
+                            <small style="color: var(--text-muted); font-size: 0.75rem;">Rekomendasi: 50–200 meter untuk dalam gedung.</small>
+                        </div>
+
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">
+                            <i class="fa-solid fa-circle-info" style="color: var(--accent);"></i>
+                            Klik marker <strong>📍</strong> di peta untuk memilih koordinat, atau ketik manual di atas.
+                        </p>
+                        <div id="location-map"></div>
+                    </div>
+                </div>
+
                 <div style="display: flex; gap: 12px; margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 20px;">
                     <button type="submit" class="btn btn-primary">Simpan Mata Kuliah</button>
                     <a href="{{ route('admin.courses.index') }}" class="btn btn-secondary">Batalkan</a>
@@ -111,3 +163,82 @@
     </div>
 
 @endsection
+
+@push('scripts')
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function() {
+    const toggle     = document.getElementById('location_required');
+    const config     = document.getElementById('location-config');
+    const toggleText = document.getElementById('loc-toggle-text');
+    const toggleLabel= document.getElementById('loc-toggle-label');
+    const latInput   = document.getElementById('latitude');
+    const lngInput   = document.getElementById('longitude');
+
+    // Koordinat default: UDINUS Semarang
+    const DEFAULT_LAT = -6.9835;
+    const DEFAULT_LNG = 110.4112;
+
+    let map, marker;
+
+    function initMap() {
+        if (map) return;
+        const lat = parseFloat(latInput.value) || DEFAULT_LAT;
+        const lng = parseFloat(lngInput.value) || DEFAULT_LNG;
+
+        map = L.map('location-map').setView([lat, lng], 18);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        marker = L.marker([lat, lng], { draggable: true }).addTo(map)
+            .bindPopup('📍 Lokasi Kelas').openPopup();
+
+        // Update input saat marker di-drag
+        marker.on('dragend', function(e) {
+            const pos = e.target.getLatLng();
+            latInput.value = pos.lat.toFixed(8);
+            lngInput.value = pos.lng.toFixed(8);
+        });
+
+        // Klik peta untuk pindah marker
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            latInput.value = e.latlng.lat.toFixed(8);
+            lngInput.value = e.latlng.lng.toFixed(8);
+        });
+    }
+
+    // Sinkronisasi input manual → marker
+    [latInput, lngInput].forEach(input => {
+        input.addEventListener('input', function() {
+            if (!map) return;
+            const lat = parseFloat(latInput.value);
+            const lng = parseFloat(lngInput.value);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                marker.setLatLng([lat, lng]);
+                map.setView([lat, lng]);
+            }
+        });
+    });
+
+    function updateToggle() {
+        if (toggle.checked) {
+            config.style.display = 'block';
+            toggleText.textContent = 'Aktif';
+            toggleLabel.style.borderColor = 'var(--accent)';
+            toggleLabel.style.background = 'rgba(14,165,233,0.07)';
+            setTimeout(() => { initMap(); map && map.invalidateSize(); }, 100);
+        } else {
+            config.style.display = 'none';
+            toggleText.textContent = 'Nonaktif';
+            toggleLabel.style.borderColor = 'var(--border-color)';
+            toggleLabel.style.background = '';
+        }
+    }
+
+    toggle.addEventListener('change', updateToggle);
+    updateToggle();
+})();
+</script>
+@endpush
